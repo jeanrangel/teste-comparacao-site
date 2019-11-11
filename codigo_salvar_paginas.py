@@ -112,7 +112,7 @@ def mainSalvarArquivo():
                             deveProsseguir = True
                             break
                         except:
-                            print('Erro ao acessar a pagina. Tentando novamente em 5 segundos. Tentativa: ' + str(contadorTent))
+                            print('Erro ao acessar a pagina: -- ' + linkPaginaAtual + ' -- Tentando novamente em 5 segundos. Tentativa: ' + str(contadorTent))
                             time.sleep(0.5) 
                 if deveProsseguir:   
                     abrirURLIterandoNoCodigo(linkPaginaAtual, textoAtributo)  
@@ -127,10 +127,10 @@ def mainSalvarArquivo():
                         nomeArquivo = re.sub('[^a-zA-Z0-9_-]+', '', nomeArquivo)
                         escreverArquivoNoDisco(nomeArquivo, arquivoTextoFinal)
                         time.sleep(1)
-                        #comitarNoGithub()
-        print('Passando o tempo... Esperando o proximo dia')
-        #Aqui a quantia de segundos vai refletir a passagem de um dia completo (24 horas) 
-        time.sleep(5)
+                        comitarNoGithub()
+            print('Passando o tempo... Esperando o proximo dia')
+            #Aqui a quantia de segundos vai refletir a passagem de um dia completo (24 horas) 
+            time.sleep(5)
 ###### METODO MAIN ######
 abrirArquivoNomesAtributos()
 mainSalvarArquivo() 
