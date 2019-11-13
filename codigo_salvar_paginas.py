@@ -22,7 +22,9 @@ def escrever_arquivo_no_disco(nome_arquivo, arquivo_texto_final):
     file.close()
 
 def comitar_no_github(data_do_commit):
-    os.system(r'cd C:/Users/jrangel\Documents/Python/GitHub & git add --all & git commit -am "Regular auto-commit ' + data_do_commit + '" & git push')
+    os.system(r'cd C:/Users/jrangel\Documents/Python/GitHub & git add --all & git commit -am '
+                '"Atenção! Houve mudança no site no dia: ' + data_do_commit + '. Favor, conferir alterações '
+                'clicando no link deste email." & git push')
     print('______________________________________________________________')
     print('Se houver algo para comitar, comando executado.')
     print('______________________________________________________________')
@@ -108,7 +110,7 @@ def abrir_URL_iterando_no_codigo(link_pagina_atual, texto_atributo):
 def main():
     while True:
         abrir_arquivo_nomes_atributos()
-        data_do_commit = 'Dia: ' + str(dt.day) + '/' + str(dt.month) + '/' + str(dt.year)
+        data_do_commit = 'Dia: ' + str(dt.day-1) + '/' + str(dt.month) + '/' + str(dt.year)
         print(data_do_commit)
         with open(r"C:\\Users\\jrangel\\Documents\\Python\\GitHub\\arquivos_necessarios\\links_para_salvar.csv", "rt", encoding='ascii') as arquivo_links:
             links = csv.reader(arquivo_links)
