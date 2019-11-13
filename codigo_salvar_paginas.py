@@ -1,9 +1,11 @@
-import urllib.request, os, time, csv, re
+import urllib.request, os, time, csv, re, datetime
+dt = datetime.datetime.today()
 arquivo_texto_antes_match  = ''
 arquivo_texto_depois_match = ''
 arquivo_texto_final = ''
 texto_atributo = ''
 arquivo_texto_intermediario = ''
+data_do_commit = ''
 global deve_prosseguir
 deve_prosseguir = False
 
@@ -19,9 +21,11 @@ def escrever_arquivo_no_disco(nome_arquivo, arquivo_texto_final):
     file.write(str(arquivo_texto_final))
     file.close()
 
-def comitar_no_github():
-    os.system(r'cd C:/Users/jrangel\Documents/Python/GitHub & git add --all & git commit -am "Regular auto-commit $(timestamp)" & git push')
+def comitar_no_github(data_do_commit):
+    os.system(r'cd C:/Users/jrangel\Documents/Python/GitHub & git add --all & git commit -am "Regular auto-commit ' + data_do_commit + '" & git push')
+    print('______________________________________________________________')
     print('Se houver algo para comitar, comando executado.')
+    print('______________________________________________________________')
     time.sleep(4)
     
 def abrir_arquivo_nomes_atributos():
@@ -39,8 +43,8 @@ def verificar_se_URL_esta_valida(link_pagina_atual):
             teste_abrir_URL(link_pagina_atual)
             return True
         except:
-            print('Erro ao acessar a pagina: -- ' + link_pagina_atual + ' -- Tentando novamente em 5 segundos. Tentativa: ' + str(contador_tent))
-            time.sleep(0.5) 
+            print('!!! - Erro ao acessar a pagina: -- ' + link_pagina_atual + ' -- Tentando novamente em 5 segundos. Tentativa: ' + str(contador_tent))
+            time.sleep(0.1) 
             if contador_tent >= 4:
                 return False
 
@@ -104,11 +108,12 @@ def abrir_URL_iterando_no_codigo(link_pagina_atual, texto_atributo):
 def main():
     while True:
         abrir_arquivo_nomes_atributos()
+        data_do_commit = 'Dia: ' + str(dt.day) + '/' + str(dt.month) + '/' + str(dt.year)
+        print(data_do_commit)
         with open(r"C:\\Users\\jrangel\\Documents\\Python\\GitHub\\arquivos_necessarios\\links_para_salvar.csv", "rt", encoding='ascii') as arquivo_links:
             links = csv.reader(arquivo_links)
             for row_link in links:
                 #Booleando que indica que se, caso consiga acessar a URL, pode escrever no arquivo e comitar
-                
                 ###### Zerando as variáveis ######
                 global arquivo_texto_final
                 arquivo_texto_final = ''
@@ -116,7 +121,9 @@ def main():
                 ##################################
 
                 link_pagina_atual = row_link[0]
+                print('______________________________________________________________')
                 print ('Pagina que esta sendo trabalhada no momento: ' + link_pagina_atual)
+                print('______________________________________________________________')
                 for atributo in nomes_atributos: 
                     texto_atributo = atributo[0]  
                     deve_prosseguir = verificar_se_URL_esta_valida(link_pagina_atual)
@@ -124,7 +131,9 @@ def main():
                         break
                     
                 if deve_prosseguir:  
+                    print('______________________________________________________________')
                     print('Executando o processo para verificar se houve mudanca no HTML.') 
+                    print('______________________________________________________________')
                     abrir_URL_iterando_no_codigo(link_pagina_atual, texto_atributo)  
                     regexp = re.compile(r'[a-zA-Z/<>[\]{}0-9]')
                     #Somente prossegue se a linha tiver alguma coisa
@@ -136,9 +145,10 @@ def main():
                         nome_arquivo = re.sub('[^a-zA-Z0-9_-]+', '', nome_arquivo)
                         escrever_arquivo_no_disco(nome_arquivo, arquivo_texto_final)
                         time.sleep(1)
-                        comitar_no_github()
-                
+                        comitar_no_github(data_do_commit)
+            print('*********______________________________________________________________*********')    
             print('Passando o tempo... Esperando o proximo dia')
+            print('*********______________________________________________________________*********')    
             #Aqui a quantia de segundos vai refletir a passagem de um dia completo (24 horas) 
             time.sleep(5)
 
