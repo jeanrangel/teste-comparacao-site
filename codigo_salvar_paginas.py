@@ -4,6 +4,8 @@ arquivoTextoDepoisMatch = ""
 arquivoTextoFinal = ""
 textoAtributo = ""
 arquivoTextoIntermediario = ""
+global deveProsseguir
+deveProsseguir = False
 
 nomesAtributos = []
 
@@ -19,7 +21,7 @@ def escreverArquivoNoDisco(nomeArquivo, arquivoTextoFinal):
 
 def comitarNoGithub():
     os.system(r'cd C:/Users/jrangel\Documents/Python/GitHub & git add --all & git commit -am "Regular auto-commit $(timestamp)" & git push')
-    print('Comitando...')
+    print('Se houver algo para comitar, comando executado.')
     time.sleep(4)
     
 def abrirArquivoNomesAtributos():
@@ -30,6 +32,17 @@ def abrirArquivoNomesAtributos():
 
 def testeAbrirURL(linkPaginaAtual):
     return urllib.request.urlopen(linkPaginaAtual)
+
+def verificarSeURLEstaValida(linkPaginaAtual):
+    for contadorTent in range(5):
+        try:
+            testeAbrirURL(linkPaginaAtual)
+            return True
+        except:
+            print('Erro ao acessar a pagina: -- ' + linkPaginaAtual + ' -- Tentando novamente em 5 segundos. Tentativa: ' + str(contadorTent))
+            time.sleep(0.5) 
+            if contadorTent >= 4:
+                return False
 
 def abrirURLIterandoNoCodigo(linkPaginaAtual, textoAtributo):
     with urllib.request.urlopen(linkPaginaAtual) as f:
@@ -99,24 +112,19 @@ def mainSalvarArquivo():
                 ###### Zerando as variáveis ######
                 global arquivoTextoFinal
                 arquivoTextoFinal = ''
-                deveProsseguir = False
+               # deveProsseguir = False
                 ##################################
 
                 linkPaginaAtual = rowLink[0]
                 print ('Pagina que esta sendo trabalhada no momento: ' + linkPaginaAtual)
                 for atributo in nomesAtributos: 
                     textoAtributo = atributo[0]  
-                    for contadorTent in range(5):
-                        try:
-                            testeAbrirURL(linkPaginaAtual)
-                            deveProsseguir = True
-                            break
-                        except:
-                            print('Erro ao acessar a pagina: -- ' + linkPaginaAtual + ' -- Tentando novamente em 5 segundos. Tentativa: ' + str(contadorTent))
-                            time.sleep(0.5) 
+                    deveProsseguir = verificarSeURLEstaValida(linkPaginaAtual)
+                    if not deveProsseguir:
+                        break
+                    
                 if deveProsseguir:   
                     abrirURLIterandoNoCodigo(linkPaginaAtual, textoAtributo)  
-
                     regexp = re.compile(r'[a-zA-Z/<>[\]{}0-9]')
                     #Somente prossegue se a linha tiver alguma coisa
                     if regexp.search(arquivoTextoFinal):
@@ -128,6 +136,7 @@ def mainSalvarArquivo():
                         escreverArquivoNoDisco(nomeArquivo, arquivoTextoFinal)
                         time.sleep(1)
                         comitarNoGithub()
+                
             print('Passando o tempo... Esperando o proximo dia')
             #Aqui a quantia de segundos vai refletir a passagem de um dia completo (24 horas) 
             time.sleep(5)
